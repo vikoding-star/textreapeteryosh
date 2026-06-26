@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Repeater by Vika</title>
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            --panel-bg: rgba(30, 41, 59, 0.7);
+            --primary-glow: #06b6d4;
+            --secondary-glow: #a855f7;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        /* Background aksen lingkaran bercahaya */
+        .blur-bg {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: var(--primary-glow);
+            filter: blur(120px);
+            border-radius: 50%;
+            top: 20%;
+            left: 15%;
+            z-index: -1;
+            opacity: 0.3;
+        }
+        .blur-bg.alt {
+            background: var(--secondary-glow);
+            top: 60%;
+            left: 65%;
+        }
+
+        .container {
+            background: var(--panel-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            padding: 40px;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 550px;
+            transform: translateY(0);
+            transition: all 0.3s ease;
+        }
+
+        h2 {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(to right, var(--primary-glow), var(--secondary-glow));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 30px;
+            letter-spacing: -0.5px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: var(--text-main);
+            font-size: 15px;
+            transition: all 0.2s ease;
+            outline: none;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--primary-glow);
+            box-shadow: 0 0 12px rgba(6, 182, 212, 0.3);
+        }
+
+        /* Menghilangkan panah default pada select bawaan biar rapi */
+        select {
+            appearance: none;
+            cursor: pointer;
+        }
+
+        .flex-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-generate {
+            background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(6, 182, 212, 0.4);
+            margin-top: 10px;
+        }
+
+        .btn-generate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(6, 182, 212, 0.6);
+        }
+
+        .btn-generate:active { transform: translateY(0); }
+
+        .result-container {
+            margin-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 25px;
+            display: none; /* Sembunyi sampai di-generate */
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 140px;
+            font-family: 'Courier New', Courier, monospace; /* Style teks hasil biar estetik */
+        }
+
+        .btn-copy {
+            background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
+            color: white;
+            margin-top: 15px;
+            box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4);
+        }
+
+        .btn-copy:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(168, 85, 247, 0.6);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="blur-bg"></div>
+<div class="blur-bg alt"></div>
+
+<div class="container">
+    <h2>TEXT REPEATER BY ACUU</h2>
+    
+    <div class="form-group">
+        <label for="inputText">Teks input</label>
+        <input type="text" id="inputText" placeholder="Ketik kalimat serumu di sini...">
+    </div>
+
+    <div class="flex-row">
+        <div class="form-group">
+            <label for="repeatCount">Jumlah</label>
+            <input type="number" id="repeatCount" value="10" min="1">
+        </div>
+
+        <div class="form-group">
+            <label for="separator">Pemisah</label>
+            <select id="separator">
+                <option value="newline">Baris Baru (⏎)</option>
+                <option value="space">Spasi ( )</option>
+                <option value="comma">Koma (,)</option>
+                <option value="none">Tanpa Jarak</option>
+            </select>
+        </div>
+    </div>
+
+    <button class="btn-generate" onclick="repeatText()">Repeat Text ✨</button>
+
+    <div id="resultWrapper" class="result-container">
+        <label for="outputText">Hasil Output</label>
+        <textarea id="outputText" readonly></textarea>
+        <button id="btnCopy" class="btn-copy" onclick="copyToClipboard()">Salin Hasil 📋</button>
+    </div>
+</div>
+
+<script>
+    function repeatText() {
+        const text = document.getElementById('inputText').value;
+        const count = parseInt(document.getElementById('repeatCount').value);
+        const separatorType = document.getElementById('separator').value;
+        const outputText = document.getElementById('outputText');
+        const resultWrapper = document.getElementById('resultWrapper');
+        const btnCopy = document.getElementById('btnCopy');
+
+        if (!text) {
+            alert('Ketikan teksnya dulu dong bos! 🚀');
+            return;
+        }
+
+        if (isNaN(count) || count <= 0) {
+            alert('Jumlah pengulangan harus di atas 0 ya!');
+            return;
+        }
+
+        let separator = '';
+        if (separatorType === 'newline') {
+            separator = '\n';
+        } else if (separatorType === 'space') {
+            separator = ' ';
+        } else if (separatorType === 'comma') {
+            separator = ', ';
+        }
+
+        // Generate text array
+        let resultArray = Array(count).fill(text);
+        
+        // Tampilkan container hasil dengan animasi
+        resultWrapper.style.display = 'block';
+        outputText.value = resultArray.join(separator);
+        
+        // Reset tombol copy seandainya baru generate ulang
+        btnCopy.innerHTML = 'Salin Hasil 📋';
+        btnCopy.style.background = 'linear-gradient(135deg, #a855f7 0%, #ec4899 100%)';
+    }
+
+    function copyToClipboard() {
+        const outputText = document.getElementById('outputText');
+        const btnCopy = document.getElementById('btnCopy');
+
+        if (!outputText.value) return;
+
+        outputText.select();
+        outputText.setSelectionRange(0, 99999);
+        navigator.clipboard.writeText(outputText.value);
+
+        // Efek tombol berubah warna pas sukses
+        btnCopy.innerHTML = '✓ Berhasil Disalin ke Clipboard!';
+        btnCopy.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+        
+        setTimeout(() => {
+            btnCopy.innerHTML = 'Salin Hasil 📋';
+            btnCopy.style.background = 'linear-gradient(135deg, #a855f7 0%, #ec4899 100%)';
+        }, 2500);
+    }
+</script>
+
+</body>
+</html>
